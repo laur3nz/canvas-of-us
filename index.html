@@ -1,0 +1,579 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>The Archive of Her</title>
+  <style>
+    @import url('https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,700;1,400&family=Cinzel:wght@500;700&display=swap');
+
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+    }
+
+    body, html {
+      width: 100%;
+      height: 100%;
+      overflow: hidden;
+      font-family: 'Playfair Display', serif;
+      background-color: #fce4ec;
+    }
+
+    /* --- EXTERIOR SCREEN --- */
+    #exterior-view {
+      position: absolute;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      background: linear-gradient(to bottom, #87ceeb 0%, #e0f7fa 100%);
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: flex-end;
+      z-index: 10;
+      transition: opacity 1s ease-in-out;
+    }
+
+    /* Clouds Effect */
+    .cloud {
+      position: absolute;
+      background: #ffffff;
+      border-radius: 50px;
+      opacity: 0.85;
+      animation: float 25s linear infinite;
+    }
+    .cloud::before, .cloud::after {
+      content: '';
+      position: absolute;
+      background: #ffffff;
+      border-radius: 50%;
+    }
+    .cloud-1 { width: 140px; height: 50px; top: 10%; left: -150px; }
+    .cloud-1::before { width: 60px; height: 60px; top: -25px; left: 20px; }
+    .cloud-1::after { width: 45px; height: 45px; top: -15px; left: 65px; }
+
+    .cloud-2 { width: 180px; height: 60px; top: 22%; left: -200px; animation-delay: 10s; }
+    .cloud-2::before { width: 80px; height: 80px; top: -35px; left: 30px; }
+    .cloud-2::after { width: 60px; height: 60px; top: -20px; left: 90px; }
+
+    @keyframes float {
+      0% { transform: translateX(0); }
+      100% { transform: translateX(calc(100vw + 250px)); }
+    }
+
+    /* Boutique Facade Architecture */
+    .boutique-facade {
+      position: relative;
+      width: min(850px, 95vw);
+      height: 70vh;
+      background-color: #fce4ec;
+      border: 3px solid #3a3a3a;
+      box-shadow: 0 15px 35px rgba(0,0,0,0.15);
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+    }
+
+    .cornice-top {
+      width: 104%;
+      height: 35px;
+      background: #f48fb1;
+      border: 3px solid #3a3a3a;
+      box-shadow: inset 0 -4px 0 #ad1457;
+      margin-top: -15px;
+    }
+
+    .sign-header {
+      width: 85%;
+      height: 60px;
+      margin-top: 15px;
+      background: #f8bbd0;
+      border: 2px solid #3a3a3a;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+    .sign-header h1 {
+      font-family: 'Cinzel', serif;
+      color: #2c2c2c;
+      font-size: clamp(1.2rem, 2.5vw, 2.2rem);
+      letter-spacing: 4px;
+      text-transform: uppercase;
+    }
+
+    .storefront-body {
+      width: 100%;
+      flex: 1;
+      display: flex;
+      padding: 20px 25px 0 25px;
+      gap: 15px;
+      position: relative;
+    }
+
+    .display-window {
+      flex: 1;
+      height: 88%;
+      border: 3px solid #3a3a3a;
+      background: rgba(255, 255, 255, 0.4);
+      box-shadow: inset 0 0 15px rgba(0,0,0,0.05);
+      position: relative;
+    }
+
+    .center-entrance {
+      width: 170px;
+      height: 100%;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+    }
+
+    .transom-window {
+      width: 100%;
+      height: 45px;
+      border: 3px solid #3a3a3a;
+      margin-bottom: 5px;
+      background: rgba(255, 255, 255, 0.6);
+    }
+
+    .door-frame {
+      width: 100%;
+      flex: 1;
+      background-color: #fce4ec;
+      border: 3px solid #3a3a3a;
+      border-bottom: none;
+      display: flex;
+      perspective: 1000px;
+      cursor: pointer;
+      position: relative;
+      z-index: 3;
+    }
+    .door {
+      width: 50%;
+      height: 100%;
+      background-color: #f8bbd0;
+      border: 2px solid #3a3a3a;
+      transition: transform 1.5s ease-in-out;
+      transform-origin: left;
+      display: flex;
+      align-items: center;
+      justify-content: flex-end;
+      padding-right: 6px;
+    }
+    .door.right {
+      transform-origin: right;
+      justify-content: flex-start;
+      padding-right: 0;
+      padding-left: 6px;
+    }
+    .door-knob {
+      width: 10px;
+      height: 24px;
+      background-color: #3a3a3a;
+      border-radius: 3px;
+    }
+
+    /* Animated Door Opening */
+    .door-frame.open .door.left { transform: rotateY(-110deg); }
+    .door-frame.open .door.right { transform: rotateY(110deg); }
+
+    .enter-btn {
+      position: absolute;
+      bottom: -55px;
+      background-color: #ffffff;
+      border: 2px solid #3a3a3a;
+      color: #3a3a3a;
+      padding: 8px 22px;
+      font-family: 'Cinzel', serif;
+      font-weight: bold;
+      border-radius: 20px;
+      cursor: pointer;
+      box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+      transition: all 0.3s;
+    }
+    .enter-btn:hover {
+      background-color: #3a3a3a;
+      color: #ffffff;
+    }
+
+    /* --- INTERIOR GALLERY SCREEN --- */
+    #gallery-view {
+      position: absolute;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      background-color: #f8bbd0;
+      display: flex;
+      align-items: center;
+      overflow-x: auto;
+      overflow-y: hidden;
+      padding: 0 10vw;
+      opacity: 0;
+      pointer-events: none;
+      transition: opacity 1s ease-in-out;
+    }
+    #gallery-view.active {
+      opacity: 1;
+      pointer-events: auto;
+    }
+
+    #gallery-view::before {
+      content: '';
+      position: absolute;
+      bottom: 0;
+      left: 0;
+      width: 20000px;
+      height: 18vh;
+      background: #5d4037;
+      border-top: 10px solid #3e2723;
+    }
+
+    .gallery-container {
+      display: flex;
+      gap: 100px;
+      align-items: center;
+      z-index: 2;
+      padding-bottom: 8vh;
+    }
+
+    /* Painting Wrapper & Frame Styling */
+    .artwork-item {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      cursor: pointer;
+      transition: transform 0.3s ease;
+    }
+    .artwork-item:hover {
+      transform: scale(1.04);
+    }
+
+    .artwork-item img {
+      max-height: 36vh;
+      max-width: 280px;
+      display: block;
+      object-fit: contain;
+      mix-blend-mode: darken;
+      filter: drop-shadow(0px 15px 12px rgba(0, 0, 0, 0.45));
+    }
+
+    /* Gold Plaque Below Painting */
+    .gold-plaque {
+      margin-top: 18px;
+      background: linear-gradient(135deg, #bf953f, #fcf6ba, #b38728);
+      border: 1px solid #5c4308;
+      padding: 8px 18px;
+      text-align: center;
+      box-shadow: 0 6px 12px rgba(0,0,0,0.3);
+      border-radius: 2px;
+      min-width: 180px;
+    }
+    .gold-plaque .title {
+      font-family: 'Cinzel', serif;
+      font-weight: 700;
+      color: #3e2723;
+      font-size: 0.85rem;
+    }
+    .gold-plaque .date {
+      font-size: 0.75rem;
+      color: #4e342e;
+      margin-top: 2px;
+    }
+
+    /* --- DETAIL POPUP MODAL --- */
+    #artwork-modal {
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      background: rgba(0, 0, 0, 0.75);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      z-index: 100;
+      opacity: 0;
+      pointer-events: none;
+      transition: opacity 0.5s ease;
+    }
+    #artwork-modal.active {
+      opacity: 1;
+      pointer-events: auto;
+    }
+
+    .modal-content {
+      background-color: #fff0f5;
+      width: min(850px, 90vw);
+      max-height: 85vh;
+      display: flex;
+      gap: 30px;
+      padding: 30px;
+      border-radius: 8px;
+      border: 3px solid #880e4f;
+      box-shadow: 0 20px 40px rgba(0,0,0,0.5);
+      overflow-y: auto;
+      transform: scale(0.9);
+      transition: transform 0.4s ease;
+    }
+    #artwork-modal.active .modal-content {
+      transform: scale(1);
+    }
+
+    .modal-img-container {
+      flex: 1;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+    .modal-img-container img {
+      max-width: 100%;
+      max-height: 60vh;
+      mix-blend-mode: darken;
+      filter: drop-shadow(0px 8px 12px rgba(0,0,0,0.3));
+    }
+
+    .modal-text-container {
+      flex: 1.2;
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      color: #4a148c;
+    }
+    .modal-title {
+      font-family: 'Cinzel', serif;
+      font-size: 1.8rem;
+      color: #880e4f;
+      margin-bottom: 5px;
+    }
+    .modal-date {
+      font-style: italic;
+      color: #ad1457;
+      margin-bottom: 15px;
+    }
+    .modal-message {
+      line-height: 1.7;
+      font-size: 1.05rem;
+      color: #2c001e;
+      white-space: pre-line;
+    }
+
+    .close-btn {
+      position: absolute;
+      top: 20px;
+      right: 25px;
+      font-size: 2rem;
+      color: #ffffff;
+      cursor: pointer;
+    }
+
+    /* --- CONTROLS --- */
+    .audio-control {
+      position: fixed;
+      bottom: 20px;
+      right: 20px;
+      background: #ffffff;
+      border: 2px solid #880e4f;
+      padding: 10px;
+      border-radius: 50%;
+      cursor: pointer;
+      z-index: 200;
+      box-shadow: 0 4px 10px rgba(0,0,0,0.2);
+    }
+  </style>
+</head>
+<body>
+
+  <!-- Audio Element -->
+  <audio id="bg-music" loop>
+    <source src="bg-music.mp3" type="audio/mpeg">
+  </audio>
+
+  <button class="audio-control" id="audio-toggle" title="Toggle Sound">🎵</button>
+
+  <!-- Exterior View (Sky & Clouds restored) -->
+  <div id="exterior-view">
+    <div class="cloud cloud-1"></div>
+    <div class="cloud cloud-2"></div>
+
+    <div class="boutique-facade">
+      <div class="cornice-top"></div>
+      <div class="sign-header">
+        <h1>THE ARCHIVE OF HER</h1>
+      </div>
+      <div class="storefront-body">
+        <div class="display-window"></div>
+        <div class="center-entrance">
+          <div class="transom-window"></div>
+          <div class="door-frame" id="museum-door">
+            <div class="door left"><div class="door-knob"></div></div>
+            <div class="door right"><div class="door-knob"></div></div>
+          </div>
+        </div>
+        <div class="display-window"></div>
+      </div>
+      <button class="enter-btn" id="enter-btn">ENTER THE GALLERY</button>
+    </div>
+  </div>
+
+  <!-- Interior Gallery View -->
+  <div id="gallery-view">
+    <div class="gallery-container" id="gallery-container">
+      <!-- Artworks dynamically inserted via JS -->
+    </div>
+  </div>
+
+  <!-- Artwork Detail Modal -->
+  <div id="artwork-modal">
+    <span class="close-btn" id="close-modal">&times;</span>
+    <div class="modal-content">
+      <div class="modal-img-container">
+        <img id="modal-img" src="" alt="Detail Artwork">
+      </div>
+      <div class="modal-text-container">
+        <h2 class="modal-title" id="modal-title"></h2>
+        <p class="modal-date" id="modal-date"></p>
+        <p class="modal-message" id="modal-message"></p>
+      </div>
+    </div>
+  </div>
+
+  <script>
+    /* --- 8 PAINTINGS DATA CONFIGURATION --- */
+    const artworks = [
+      {
+        image: "art1.jpg",
+        title: "I'm Drunk, I Meow You",
+        date: "2026",
+        message: "A story of love, longing, and the feelings we are sometimes too afraid to say.\n\nCats have a quiet way of showing affection. They do not always express love through grand gestures, but through small moments of comfort, closeness, and simply choosing to stay."
+      },
+      {
+        image: "art2.jpg",
+        title: "Puppets of Perception",
+        date: "2025",
+        message: "A story of influence, control, and the search for truth.\n\nWe are constantly surrounded by voices telling us what to believe, what to fear, and what to accept as reality."
+      },
+      {
+        image: "art3.jpg",
+        title: "Tagu-Taguan, Bulag-Bulagan",
+        date: "2024",
+        message: "A story of truth, silence, and the struggle to see beyond what is shown.\n\nWe are often told to trust what we see, but if our eyes witness something, then it must be true."
+      },
+      {
+        image: "art4.jpg",
+        title: "She Grew Wings in Silence",
+        date: "2023",
+        message: "A story of transformation, identity, and the quiet battles no one sees.\n\nPeople often celebrate the moment someone finally changes, but they rarely see the struggles that came before it."
+      },
+      {
+        image: "art5.jpg",
+        title: "Who Am I",
+        date: "2022",
+        message: "A journey through self-discovery and finding clarity among the colors of emotion.\n\nEvery piece of art holds a part of our evolution and the memories we carry with us over the years."
+      },
+      {
+        image: "art6.jpg",
+        title: "Artwork 6",
+        date: "2021",
+        message: "Description for painting 6."
+      },
+      {
+        image: "art7.jpg",
+        title: "Artwork 7",
+        date: "2020",
+        message: "Description for painting 7."
+      },
+      {
+        image: "art8.jpg",
+        title: "Artwork 8",
+        date: "2019",
+        message: "Description for painting 8."
+      }
+    ];
+
+    /* --- INTERACTION LOGIC --- */
+    const audio = document.getElementById('bg-music');
+    const audioToggle = document.getElementById('audio-toggle');
+    const museumDoor = document.getElementById('museum-door');
+    const enterBtn = document.getElementById('enter-btn');
+    const exteriorView = document.getElementById('exterior-view');
+    const galleryView = document.getElementById('gallery-view');
+    const galleryContainer = document.getElementById('gallery-container');
+    const modal = document.getElementById('artwork-modal');
+    const closeModal = document.getElementById('close-modal');
+
+    // Audio Control
+    let isPlaying = false;
+    function startMusic() {
+      if (!isPlaying) {
+        audio.play().then(() => {
+          isPlaying = true;
+        }).catch(() => {});
+      }
+    }
+
+    audioToggle.addEventListener('click', () => {
+      if (isPlaying) {
+        audio.pause();
+        isPlaying = false;
+      } else {
+        audio.play();
+        isPlaying = true;
+      }
+    });
+
+    // Door Transition
+    function enterGallery() {
+      startMusic();
+      museumDoor.classList.add('open');
+      
+      setTimeout(() => {
+        exteriorView.style.opacity = '0';
+        galleryView.classList.add('active');
+        setTimeout(() => {
+          exteriorView.style.display = 'none';
+        }, 1000);
+      }, 1200);
+    }
+
+    museumDoor.addEventListener('click', enterGallery);
+    enterBtn.addEventListener('click', enterGallery);
+
+    // Populate Gallery Artworks
+    artworks.forEach((art) => {
+      const artItem = document.createElement('div');
+      artItem.classList.add('artwork-item');
+      artItem.innerHTML = `
+        <img src="${art.image}" alt="${art.title}">
+        <div class="gold-plaque">
+          <div class="title">${art.title}</div>
+          <div class="date">${art.date}</div>
+        </div>
+      `;
+
+      artItem.addEventListener('click', () => {
+        document.getElementById('modal-img').src = art.image;
+        document.getElementById('modal-title').textContent = art.title;
+        document.getElementById('modal-date').textContent = art.date;
+        document.getElementById('modal-message').textContent = art.message;
+        modal.classList.add('active');
+      });
+
+      galleryContainer.appendChild(artItem);
+    });
+
+    // Close Detail Modal
+    closeModal.addEventListener('click', () => {
+      modal.classList.remove('active');
+    });
+
+    modal.addEventListener('click', (e) => {
+      if (e.target === modal) {
+        modal.classList.remove('active');
+      }
+    });
+  </script>
+</body>
+</html>
